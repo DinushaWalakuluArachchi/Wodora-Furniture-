@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Woodora - Advanced Furniture Search</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <!--        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            woodora: '#3b5d50',
+                        }
+                    }
+                }
+            }
+        </script>
+        <style>
+            .filter-section {
+                transition: all 0.3s ease;
+                overflow: hidden;
+            }
+            .filter-collapsed {
+                max-height: 0;
+            }
+            .filter-expanded {
+                max-height: 500px;
+            }
+            .color-option {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+            .color-option:hover {
+                transform: scale(1.1);
+            }
+            .color-option.selected {
+                border: 2px solid #3b5d50;
+                box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            }
+            .price-slider {
+                -webkit-appearance: none;
+                width: 100%;
+                height: 8px;
+                border-radius: 5px;
+                background: #d1d5db;
+                outline: none;
+            }
+            .price-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #3b5d50;
+                cursor: pointer;
+            }
+            .price-slider::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #3b5d50;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50" onload="loadDatas()">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header with back button -->
+            <div class="flex items-center mb-8">
+                <a href="index.html" class="flex items-center text-woodora hover:text-woodora-dark mr-4">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    <span class="font-medium">Back to Home</span>
+                </a>
+                <h1 class="text-3xl font-bold text-gray-800">Advanced Furniture Search</h1>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Filters sidebar -->
+                <div class="w-full lg:w-1/4">
+                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-6">Filters</h2>
+
+
+
+
+
+                        <!-- Category filter -->
+                        <div class="mb-6 border-b pb-4">
+                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilter('category')">
+                                <h3 class="font-medium text-gray-700">Category</h3>
+                                <i class="fas fa-chevron-down text-gray-500 transition-transform" id="category-arrow"></i>
+                            </div>
+                            <div class="filter-section filter-expanded mt-4" id="category-filter">
+                                <div class="space-y-2">
+                                    <li class="flex items-center" id="category-li">
+                                        <input type="radio" class="rounded text-woodora mr-2" unchecked>
+                                        <a id="category-a"><span >Sofas</span></a>
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Material filter -->
+                        <div class="mb-6 border-b pb-4">
+                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilter('material')">
+                                <h3 class="font-medium text-gray-700">Material</h3>
+                                <i class="fas fa-chevron-down text-gray-500 transition-transform" id="material-arrow"></i>
+                            </div>
+                            <div class="filter-section filter-expanded mt-4" id="material-filter">
+                                <div class="space-y-2">
+                                    <li class="flex items-center" id="material-li">
+                                        <input type="radio" class="rounded text-woodora mr-2" Unchecked>
+                                        <a id="material-a"><span >Solid Wood</span></a> 
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price filter -->
+
+
+                        <div class="mb-6">
+                            <h3 class="font-medium mb-3">Price Range</h3>
+                            <div id="slider-range"></div>
+                            <div class="mb-2">
+                                <input type="range"  max="2000000" value="1000000" class="price-range-slider" id="priceRange">
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Rs:0</span>
+                                <span id="maxprice">1000000</span>
+                                <span>Rs.2000000</span>
+                            </div>
+                                      </div>
+
+
+                        <!-- Color filter -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center cursor-pointer" onclick="toggleFilter('color')">
+                                <h3 class="font-medium text-gray-700">Color</h3>
+                                <i class="fas fa-chevron-down text-gray-500 transition-transform" id="color-arrow"></i>
+                            </div>
+                            <div class="filter-section filter-expanded mt-4" id="color-filter">
+                                <div class="space-y-2" id="color-options">
+                                    <li class="flex items-center" id="color-li">
+                                        <input type="radio" class="rounded text-woodora mr-2" Unchecked>
+                                        <a  id="color-a"><span >red</span></a>
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        <button class="w-full bg-woodora text-white py-2 rounded hover:bg-woodora-dark transition" onclick="searchProduct(0);">
+                            Apply Filters
+                        </button>
+                        <button class="w-full mt-2 text-woodora py-2 rounded border border-woodora hover:bg-gray-50 transition" onclick="reset();">
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search results -->
+                <div class="w-full lg:w-3/4">
+                    <!-- Search bar -->
+                    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                        <div class="flex items-center border rounded-md overflow-hidden">
+                            <!-- Search Icon -->
+                            <div class="px-4 bg-gray-100 text-gray-600 flex items-center">
+                                <i class="fas fa-search"></i>
+                            </div>
+
+                            <!-- Input Field -->
+                            <input 
+                                type="text" 
+                                placeholder="Search by furniture name, brand, or description..." 
+                                class="flex-grow py-2 px-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                id="searchInput"
+                                >
+
+                            <!-- Search Button -->
+                            <button 
+                                class="bg-gradient-to-r from-green-600 to-green-400 text-white px-6 py-2 font-medium hover:opacity-90 transition-all"
+                                onclick="BasicSearch();"
+                                >
+                                Search
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <!-- Results header -->
+                    <div class="flex justify-between items-center mb-6">
+<!--                        <p class="text-gray-600">Showing <span class="font-medium">12</span> of <span class="font-medium">48</span> results</p>-->
+                        <div class="flex items-center">
+                            <span class="text-gray-600 mr-2"><span id="all-item-count"></span>Sort by:</span>
+                            <select class="border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-woodora" id="st-sort">
+                                <option>Most Popular</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Product grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" id="st-product-container">
+                        <!-- Product 1 -->
+                        <div class="col-xl-4 col-sm-6" id="st-product">
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition" >
+                                <div class="relative">
+                                    <a href="#" id="st-product-a-1">
+                                        <img src="" alt="Sofa" class="w-full h-48 object-cover" id="st-product-img-1">  
+                                    </a>  
+                                    <div class="absolute top-2 right-2 bg-woodora text-white text-xs px-2 py-1 rounded">New</div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-lg mb-1" id="st-product-title-1">Elegant Wooden Sofa</h3>
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold text-woodora" id="st-product-price-1" >$899</span>
+                                        <button class="text-woodora hover:text-woodora-dark">
+                                            <i class="fas fa-shopping-cart" id="st-product-add-to-cart"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Pagination -->
+
+                    </div>
+
+                    <div class="flex justify-center mt-8" id="st-pagination-container">
+                        <nav class="inline-flex rounded-md shadow">
+                            <a href="#" class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50" id="st-pagination-button">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                            <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </nav>
+                    </div>
+
+                    <!--                    <div class="text-center pt--20" id="st-pagination-container">
+                                            <a href="#" class="axil-btn btn-bg-primary ml--10" id="st-pagination-button">Prev</a>
+                                        </div>-->
+
+                    <!--                    <div class="d-grid gap-2 d-md-flex justify-content-md-end" id="st-pagination-container">
+                                            <a href="#" class="btn btn-md btn-dark rounded" id="st-pagination-button">Prev</a>
+                                        </div>-->
+
+                </div>
+            </div>
+
+            <script>
+                // Toggle filter sections
+                function toggleFilter(filterName) {
+                    const filter = document.getElementById(`${filterName}-filter`);
+                    const arrow = document.getElementById(`${filterName}-arrow`);
+
+                    filter.classList.toggle('filter-expanded');
+                    filter.classList.toggle('filter-collapsed');
+                    arrow.classList.toggle('rotate-180');
+                }
+
+                // Initialize all filters as expanded
+                document.addEventListener('DOMContentLoaded', function () {
+                    const filters = ['category', 'material', 'price', 'color'];
+                    filters.forEach(filter => {
+                        document.getElementById(`${filter}-filter`).classList.add('filter-expanded');
+                    });
+
+                    // Color selection
+                    const colorOptions = document.querySelectorAll('.color-option');
+                    colorOptions.forEach(option => {
+                        option.addEventListener('click', function () {
+                            colorOptions.forEach(opt => opt.classList.remove('selected'));
+                            this.classList.add('selected');
+                        });
+                    });
+
+                    // Price range slider
+
+                });
+
+                const priceRange = document.getElementById('priceRange');
+                const maxPrice = document.getElementById('maxprice');
+
+                priceRange.addEventListener('input', function () {
+                    maxPrice.textContent = this.value;
+                });
+            </script>
+            <script src="js1/search.js"></script>
+            <script src="js/notification.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+
+    </body>
+</html>

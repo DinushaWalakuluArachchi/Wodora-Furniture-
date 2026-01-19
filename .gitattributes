@@ -1,0 +1,9 @@
+
+
+*.html linguist-vendored
+*.css linguist-vendored
+*.js linguist-vendored
+
+
+*.html linguist-documentation
+*.css linguist-documentation
